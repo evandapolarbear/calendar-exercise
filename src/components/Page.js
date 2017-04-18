@@ -31,36 +31,66 @@ export default class Page extends PureComponent {
 
         // The currently selected day represented by numerical timestamp
         day: Date.now(),
-
+        //to handle difference between events passed hour&
+        //events on different days
+        displayDate:Date.now(),
         // The currently selected event in the agenda
         // (mainly to trigger event detail overlay)
-        selectedEventId: undefined
+        selectedEventId: undefined,
     }
 
     _handleSelectEvent(selectedEventId) {
-        this.setState({selectedEventId});
+      //opens overlay & close
+      this.setState({selectedEventId});
+
+      //adds listener to body to close overlay
+      document.body.addEventListener('click', this._handleEventDetailOverlayClose.bind(this))
+
+      //prevents body scroll on small screens
+      document.body.classList.add('stop-scroll')
+      document.documentElement.classList.add('stop-scroll');
     }
 
+
     _handleEventDetailOverlayClose() {
-        this.setState({selectedEventId: undefined});
+      //closes overlay
+      this.setState({selectedEventId: undefined});
+
+      //remove body click listener
+      document.body.removeEventListener('click', this._handleEventDetailOverlayClose.bind(this));
+
+      //allows body scroll on small screens again
+      document.body.classList.remove('stop-scroll')
+      document.documentElement.classList.remove('stop-scroll');
     }
 
     _handlePrev() {
         // TODO: Update this.state.day to go back 1 day so previous button works
+        //
+        //COMPLETED
+      let timeToSubtract = 60000 * 60 * 24;
+      let newDay =this.state.displayDate - timeToSubtract;
+      this.setState({displayDate: newDay});
     }
 
     _handleNext() {
         // TODO: Update this.state.day to go forward 1 day so next button works
+        //
+        //COMPLETED
+        let timeToAdd = 60000 * 60 * 24;
+        let newDay =this.state.displayDate + timeToAdd;
+        this.setState({displayDate: newDay});
+
     }
 
     render() {
-        let {events, day, selectedEventId} = this.state;
-        let filteredEvents = filterEventsByDay(events, day);
+        let {events, day, displayDate, selectedEventId, showForm} = this.state;
+        let filteredEvents = filterEventsByDay(events, displayDate);
         let selectedEvent = getEventFromEvents(events, selectedEventId);
-        let eventDetailOverlay;
+        let overlay;
 
         if (selectedEvent) {
-            eventDetailOverlay = (
+            overlay = (
                 <EventDetailOverlay
                     event={selectedEvent}
                     onClose={this._handleEventDetailOverlayClose.bind(this)}
@@ -74,12 +104,16 @@ export default class Page extends PureComponent {
                     <h1 className="page__title">Daily Agenda</h1>
                 </header>
                 <DayNavigator
-                    dateDisplay={getDisplayDate(day)}
+                    dateDisplay={getDisplayDate(displayDate)}
                     onPrev={this._handlePrev.bind(this)}
                     onNext={this._handleNext.bind(this)}
                 />
-                <Calendar events={filteredEvents} onSelectEvent={this._handleSelectEvent.bind(this)} />
-                {eventDetailOverlay}
+              <Calendar
+                events={filteredEvents} onSelectEvent={this._handleSelectEvent.bind(this)}
+                currentTime={day}
+                displayTime={displayDate}
+                />
+              {overlay}
             </div>
         );
     }

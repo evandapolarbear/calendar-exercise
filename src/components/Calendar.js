@@ -12,14 +12,33 @@ export default class Calendar extends PureComponent {
         onSelectEvent: PropTypes.func.isRequired,
     }
 
+
+    //handles logic to see if event has passed
+    _checkIfpassed(hour){
+      let {currentTime, displayTime} = this.props;
+      let currentHour = new Date(currentTime).getHours();
+
+      if (currentTime > displayTime) {
+        return true;
+      } else if(currentTime < displayTime){
+        return false;
+      } else if (currentHour >= hour){
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     _renderTimeSlots() {
         let {events, onSelectEvent} = this.props;
+
 
         return new Array(HOURS_DAY)
             .fill(0)
             .map((item, index) => {
                 let hour = index;
                 let filteredEvents = filterEventsByHour(events, hour);
+                let hasPassed = this._checkIfpassed(hour)
 
                 return (
                     <TimeSlot
@@ -27,6 +46,7 @@ export default class Calendar extends PureComponent {
                         hour={hour}
                         events={filteredEvents}
                         onSelectEvent={onSelectEvent}
+                        hasPassed={hasPassed}
                     />
                 )
             });
