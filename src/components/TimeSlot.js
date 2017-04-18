@@ -12,11 +12,20 @@ export default class TimeSlot extends PureComponent {
         onSelectEvent: PropTypes.func.isRequired,
     }
 
+    _handleIsPassed(){
+      let {hasPassed} = this.props;
+      if (hasPassed) {
+        return ' passed';
+      } else {
+        return '';
+      }
+    }
+
     _renderEvents() {
         let {events, onSelectEvent} = this.props;
 
         return events.map((event) => (
-            <div key={event.id} className="time-slot__event">
+            <div key={event.id} className={"time-slot__event" +  this._handleIsPassed()}>
                 <TimeSlotEvent event={event} onSelect={onSelectEvent.bind(null, event.id)} />
             </div>
         ));

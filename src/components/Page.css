@@ -1,13 +1,34 @@
 /*
  * TODO: page needs a gradient from white (top) to light gray (bottom)
+ * COMPLETE
  * TODO: On narrow screens the background shouldn't scroll when detail overlay is shown
+ * COMPLETE (at bottom)
  */
 
+body {
+   background: -webkit-linear-gradient(white, rgb(165, 169, 175));
+   background: -o-linear-gradient(white, rgb(165, 169, 175));
+   background: -moz-linear-gradient(white, rgb(165, 169, 175));
+   background: linear-gradient(white, rgb(165, 169, 175));
+}
+
+/*added a little more margin to page so gradient is more easily
+visible*/
 .page {
-    margin: 1rem;
+    margin: 2rem;
 }
 .page__header {
     margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page__header > button {
+  font-weight: 700;
+  height: 1.5rem;
+  border-radius: 4px;
+  background-color: whitesmoke;
 }
 
 .page__nav {
@@ -44,4 +65,12 @@
 }
 .page__next-day::after {
     content: '▶︎';
+}
+
+/*prevents scroll, added and removed from
+body and html on overlay open and close*/
+@media screen and (max-width: 50rem) {
+    .stop-scroll{
+      overflow: hidden;
+    }
 }
